@@ -9,8 +9,8 @@ import statistics
 from generate_network import Dynamic_Social_Net
 
 
-def test_average(start='2020-10-01', end='2020-11-01', N = 10, days = 30):
-    s = Gill_Sim(Dynamic_Social_Net(n=100))
+def test_average(start='2020-10-01', end='2020-11-01', N = 30, days = 30):
+    s = Gill_Sim(Dynamic_Social_Net(n=1000))
     datacum = {'infected' : [[] for i in range(days)]}
     avgdict = {'infected' : [0 for i in range(days)]}
     stdict = {'infected' : [0 for i in range(days)]}

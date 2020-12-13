@@ -54,7 +54,7 @@ class Social_Net():
                                 working_nodes.append(n)
                 BAG = nx.barabasi_albert_graph(n_work, self.ba_degree)
                 #print ('Workplace BA!')
-                self.degree_histogram(G=BAG, hist_file='workBA_hist.png', loglog_file='workBA_log.png')
+                #self.degree_histogram(G=BAG, hist_file='workBA_hist.png', loglog_file='workBA_log.png')
                 #map the BAG to the actual network edges
                 for pair in list(BAG.edges()):
                         self.G.add_edge(working_nodes[pair[0]], working_nodes[pair[1]], lockdown=False)
@@ -210,8 +210,6 @@ class Dynamic_Social_Net(Social_Net):
                                             interaction_prob=0.20, social_prob=0.01, rand_degree=5) #my choice
                         self.families = self.family_graph(n, self.G)    #added egdes between members
                         self.random_enumerate_families()
-                        self.hist_net = []
-                        self.update_hist_net()
                 else:
                         pass #complete?
 
@@ -226,11 +224,8 @@ class Dynamic_Social_Net(Social_Net):
                         i += 1
 
         def run_net(self, times = 10):
-                l = len(self.hist_net)
                 for t in range(times):
                         self.trigger()
-                        self.update_hist_net()
-                return self.hist_net[-1]
 
         def trigger(self):
                 self.G.clear_edges()
@@ -244,11 +239,7 @@ class Dynamic_Social_Net(Social_Net):
                 
         def return_families(self):
                 return self.families
-        
-        def update_hist_net(self):
-                self.hist_net.append([e for e in self.G.edges])
 
-        def return_hist_net(self):  return self.hist_net
 '''
 if __name__ == '__main__':
         My = Social_Net(complete_net=False)
@@ -267,11 +258,3 @@ if __name__ == '__main__':
         #plt.show()
         #nx.write_graphml(G, 'tenk_net.graphml')
 '''
-if __name__ == '__main__':
-        A = Dynamic_Social_Net(10)
-        print('Initial info: ', nx.info(A.return_graph()))
-        print('Families: ', A.return_families())
-        print('Initial edges: ', list(A.return_graph().edges))
-        A.run_net()
-        print('History: ', A.return_hist_net())
-        nx.write_gexf(A.return_graph(), "Dynamic_last.gexf")
