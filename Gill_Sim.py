@@ -211,7 +211,7 @@ class Gill_Sim():
                     elif n in self.l_r:
                         G.nodes[n]['status'] = 'R'
                         self.l_r.remove(n)
-                        # self.n_r +=1 ????
+                        # self.n_r +=1 ???????
                         # self.m_r.append(n) ??????????
                         self.m_q = np.delete(self.m_q, np.argwhere(self.m_q==n)) #remove n
                         self.n_q -= 1
