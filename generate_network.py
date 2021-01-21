@@ -218,6 +218,7 @@ class Dynamic_Social_Net(Social_Net):
                                             #interaction_prob=0.20, social_prob=0.01, rand_degree=3) #my choice
                         self.set_parameters()
                         self.families = self.family_graph(n, self.G)    #added egdes between members
+                        self.workplace_BA() #no changes??????
                         self.random_enumerate_families()
                         self.lock = False
                 else:
@@ -239,8 +240,8 @@ class Dynamic_Social_Net(Social_Net):
                 for _, nodes_to_add in enumerate(self.families):
                         for i, j in list(it.combinations(nodes_to_add, 2)):
                                 self.G.add_edge(i, j, lockdown=True)  # edges between family members
-                if self.lock == False:
-                        self.workplace_BA()
+                # if self.lock == False:
+                #         self.workplace_BA() it makes more sense?????
                 self.workplace_random()
                 self.interaction()  # lockdown interaction with essential workers
                 if self.lock == False:
@@ -255,8 +256,8 @@ class Dynamic_Social_Net(Social_Net):
                 for _, nodes_to_add in enumerate(self.families):
                         for i,j in list(it.combinations(nodes_to_add, 2)):
                                 self.G.add_edge(i,j, lockdown=True)     #edges between family members
-                if self.lock == False:
-                        self.workplace_BA_trigger()
+                # if self.lock == False:
+                #         self.workplace_BA_trigger() it makes more sense?????
                 self.workplace_random_trigger()
                 self.interaction() #lockdown interaction with essential workers. =trigger
                 if self.lock == False:

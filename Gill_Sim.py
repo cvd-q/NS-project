@@ -57,7 +57,7 @@ class Gill_Sim():
                      'dead_cum':[None], 'total_inf':[self.n_i], 'r0':[None]}###
         self.init_run()
 
-    def set_params(self, mu = 0.003, beta = 0.012, gamma = 0.001, qua = 0.003, BEFORE_QUA = [8,14], AFTER_QUA = [10,20]): #mu=recovery rate, beta=infection rate
+    def set_params(self, mu = 0.003, beta = 0.015, gamma = 0.001, qua = 0.003, BEFORE_QUA = [8,14], AFTER_QUA = [10,20]): #mu=recovery rate, beta=infection rate
         # gamma = death rate, qua = quarantine rate, before_qua = n days before quarantine, after_qua = n days before exiting from quarantine
         # ATTENTION TO HOW THE PARAMS ARE USED IN RUN() FUNCTION! 
         self.mu = mu
@@ -243,6 +243,7 @@ class Gill_Sim():
                 print('CURRENT N_quarantined: ', len(self.m_q), ' ', self.n_q)#self.n_q
                 print('Total_infected: ', self.data['total_inf'][t+1])
                 print('CURRENT R0: ', self.data['r0'][t+1])
+                print('CURRENT infected nodes: ', len(self.m_i))
                 print('\n')
         self.time += T_sim
 
@@ -259,7 +260,7 @@ class Gill_Sim_lock(Gill_Sim):
     def __init__(self, d_G = Dynamic_Social_Net(n=1500), n_i = 3, default = True):
         super().__init__(d_G, n_i, default)
         
-    def run_lock(self, T_sim = 50, s_lock = 10, e_lock = 20): #IMPROVE IT WITH LOCKDOWN LIST
+    def run_lock(self, T_sim = 50, s_lock = 10, e_lock = 20):
         self.init_run()
         self.run(s_lock)
         print('####### START LOCK ##########')
@@ -269,12 +270,18 @@ class Gill_Sim_lock(Gill_Sim):
         self.d_G.set_lock(lock=False)
         self.run(T_sim-e_lock)
 
-    def run_part_lock(self, T_sim=50, s_lock=10, e_lock=20):  # IMPROVE IT WITH LOCKDOWN LIST
+    def run_part_lock(self, T_sim=50, s_lock=10, e_lock=20):  # Italian lockdown
         self.init_run()
         self.run(s_lock)
         print('####### START LOCK ##########')
+        lock_days = int((e_lock - s_lock)/2.5)
+        part_days = e_lock - s_lock - lock_days
+        self.d_G.set_lock(lock=True)
+        self.run(lock_days)
+        print('>>>>>>>>> END TOTAL LOCKDOWN')
+        self.d_G.set_lock(lock=False)
         self.d_G.set_parameters_part_lock()
-        self.run(e_lock - s_lock)
+        self.run(part_days)
         print('####### END LOCK ##########')
         self.d_G.set_parameters()
         self.run(T_sim - e_lock)
@@ -289,7 +296,7 @@ if __name__ == '__main__': #CHANGE TO Gill_Sim_lock()
     #print('Families: ', s.return_d_graph_families())
     G = s.return_d_graph().return_graph()
     print('###########START############')
-    s.run_part_lock(120, 16+7, 84+7)
+    s.run_part_lock(120, 16+7, 84)
     #s.run_lock(120, 16+7, 84+7) #DELAY 1 WEEK
     data = s.return_data()
     draw_curve(data, len(G), len(data['infected']))
@@ -305,16 +312,16 @@ if __name__ == '__main__': #CHANGE TO Gill_Sim_lock()
     jun = [row[0] for row in c[1:]].index('2020-06-01')
     datadict = {'infected':[int(i[inf]) for i in c[feb:jun]]}
 
-    fig, ax = plt.subplots(3,1)
+    fig, ax = plt.subplots(2,1)
     x = [i+1 for i in range(len(datadict['infected']))]
     ax[0].plot(x, datadict['infected'], 'r', linewidth=1)
     x = [i+1 for i in range(len(data['infected']))]
-    ax[1].plot(x, data['infected'], 'r', linewidth=1)
-    ax[1].vlines(x=16, ymin=0, ymax=max(data['infected'][1:]), colors='black', ls='--', lw=2)
-    ax[1].vlines(x=84, ymin=0, ymax=max(data['infected'][1:]), colors='green', ls='--', lw=2)
+    ax[1].plot(x, data['infected'], 'b', linewidth=1)
+    ax[1].vlines(x=16, ymin=0, ymax=max(data['infected'][1:]), colors='black', ls='--', lw=1)
+    ax[1].vlines(x=84, ymin=0, ymax=max(data['infected'][1:]), colors='green', ls='--', lw=1)
     x = [i+1 for i in range(len(data['infected'])-1)]
-    INCUB_DAYS = 14
-    l = [0]*INCUB_DAYS + data['infected'][1:len(data['infected'])-INCUB_DAYS]
-    ax[2].plot(x, l, 'r', linewidth=1) # translated curve; incubation period
+    # INCUB_DAYS = 14
+    # l = [0]*INCUB_DAYS + data['infected'][1:len(data['infected'])-INCUB_DAYS]
+    # ax[2].plot(x, l, 'r', linewidth=1) # translated curve; incubation period
     plt.savefig('Test_1', dpi=500)
     plt.close()
