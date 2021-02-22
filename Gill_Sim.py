@@ -125,15 +125,15 @@ class Gill_Sim():
                             if len(i_q): 
                                 m = int(np.random.choice(i_q, 1))
                                 self.l_r.append(m) #the infected ready to exit from quarantine
-                                self.m_i = np.delete(self.m_i, np.argwhere(self.m_i == m)) #???????
-                                self.n_i -= 1 #????????
-                                self.m_r.append(m) #???????????
-                                self.n_r += 1  #??????????????
+                                self.m_i = np.delete(self.m_i, np.argwhere(self.m_i == m))
+                                self.n_i -= 1
+                                self.m_r.append(m)
+                                self.n_r += 1
                             else:
                                 sp = True #everyone in quarantine list is S
                         elif c==0 or sp: #SPONTANEOUS recovery
                             if len(self.m_i):
-                                # l_i = list(set(self.m_i)-set(self.m_q)) #infected node that is not in quarantine?????
+                                # l_i = list(set(self.m_i)-set(self.m_q)) #infected node that is not in quarantine
                                 if len(self.m_i):
                                     m = int(np.random.choice(self.m_i, 1))
                                     G.nodes[m]['status'] = 'R' #node m recovered
@@ -144,7 +144,7 @@ class Gill_Sim():
                         if self.Mu>self.mu:  self.Mu -= self.mu
                         if self.Gamma>self.gamma:    self.Gamma -= self.gamma
                     elif z == 'D' and self.n_q: #death transition: one has to be quarantined (hospitalized) before death
-                        i_q = list(set(self.m_q) and set(self.m_i) )#- set(self.l_r)) # who are infected and quarantined??????
+                        i_q = list(set(self.m_q) and set(self.m_i) )#- set(self.l_r)) # who are infected and quarantined
                         if len(i_q): 
                             m = int(np.random.choice(i_q, 1))
                             G.nodes[m]['status'] = 'D' #node m dies
@@ -211,8 +211,6 @@ class Gill_Sim():
                     elif n in self.l_r:
                         G.nodes[n]['status'] = 'R'
                         self.l_r.remove(n)
-                        # self.n_r +=1 ???????
-                        # self.m_r.append(n) ??????????
                         self.m_q = np.delete(self.m_q, np.argwhere(self.m_q==n)) #remove n
                         self.n_q -= 1
             self.data['susceptible'][t+1] = self.data['susceptible'][t] - self.data['infected'][t+1]
